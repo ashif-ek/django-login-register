@@ -5,14 +5,13 @@ from django.contrib.auth.hashers import make_password
 
 class RegisterForm(forms.ModelForm):
     """
-    Handles new user registration.
-    - Uses a ModelForm because we are directly creating a User record.
-    - We override `clean` or `save` to ensure passwords are hashed before storing.
+    Handles new user signup. Uses a ModelForm for direct User creation.
+    Password is hashed here before saving to keep the database secure.
     """
 
     password = forms.CharField(
-        widget=forms.PasswordInput,  # hides password input
-        help_text="Enter a strong password."
+        widget=forms.PasswordInput,  # hides typed characters
+        help_text="Enter a strong password"
     )
 
     class Meta:
@@ -21,29 +20,25 @@ class RegisterForm(forms.ModelForm):
 
     def save(self, commit=True):
         """
-        Override the default save() to hash the password.
-        Without this, Django would store plain text — a critical security issue.
+        Override save so the password never goes into the DB in plain text.
         """
         user = super().save(commit=False)
-        user.password = make_password(self.cleaned_data['password'])  # hash password
+        user.password = make_password(self.cleaned_data['password'])
 
         if commit:
             user.save()
-
         return user
 
 
 class LoginForm(forms.Form):
     """
-    Simple login form.
-    - Does not interact with the database directly.
-    - Only collects raw email/password input.
+    Basic login form. Only collects raw credentials; it does not verify them here.
+    The view handles authentication.
     """
-    email = forms.EmailField(
-        help_text="Enter your registered email."
-    )
+
+    email = forms.EmailField(help_text="Enter your registered email")
 
     password = forms.CharField(
-        widget=forms.PasswordInput,  # hides password input
-        help_text="Enter your password."
+        widget=forms.PasswordInput,
+        help_text="Enter your password"
     )
