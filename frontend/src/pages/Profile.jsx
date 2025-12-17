@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../api";
 import Layout from "../components/Layout";
+import { useToast } from "../context/ToastContext";
 
 function Profile() {
     const [profile, setProfile] = useState({ full_name: "", bio: "", institution: "" });
@@ -9,6 +10,8 @@ function Profile() {
     const [preview, setPreview] = useState(null); // For previewing upload
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    
+    const { addToast } = useToast();
 
     useEffect(() => {
         getProfile();
@@ -21,7 +24,7 @@ function Profile() {
             setEmail(res.data.email);
             setLoading(false);
         } catch (err) {
-            alert("Failed to load profile.");
+            addToast("Failed to retrieve profile credentials.", "error");
             setLoading(false);
         }
     };
@@ -54,10 +57,10 @@ function Profile() {
             setProfile(res.data); // Update state with response (which includes new image URL)
             setPreview(null);
             setImage(null);
-            alert("Profile updated successfully!");
+            addToast("Profile updated successfully.", "success");
         } catch (err) {
             console.error(err);
-            alert("Failed to update profile.");
+            addToast("Failed to update profile.", "error");
         } finally {
             setSaving(false);
         }

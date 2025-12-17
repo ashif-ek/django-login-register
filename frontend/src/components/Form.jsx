@@ -2,6 +2,7 @@ import { useState } from "react";
 import api from "../api";
 import { useNavigate, Link } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
+import { useToast } from "../context/ToastContext";
 import "../styles/Form.css"
 
 function Form({ route, method }) {
@@ -9,6 +10,7 @@ function Form({ route, method }) {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { addToast } = useToast();
 
     const name = method === "login" ? "Login" : "Register";
 
@@ -43,9 +45,9 @@ function Form({ route, method }) {
                      }
                      errorMessage = messages.join('\n');
                 }
-                alert(errorMessage);
+                addToast(errorMessage, "error");
             } else {
-                alert(error.message || "Something went wrong!");
+                addToast(error.message || "An unexpected error occurred.", "error");
             }
         } finally {
             setLoading(false)
@@ -96,6 +98,16 @@ function Form({ route, method }) {
                     </>
                 )}
             </p>
+            {method === "login" && (
+                <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+                    <a href="http://127.0.0.1:8000/admin/" target="_blank" rel="noopener noreferrer" className="text-xs font-sans text-slate-400 hover:text-slate-600 transition flex items-center justify-center gap-1 uppercase tracking-wider">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                        </svg>
+                        Administrative Access
+                    </a>
+                </div>
+            )}
         </form>
     );
 }

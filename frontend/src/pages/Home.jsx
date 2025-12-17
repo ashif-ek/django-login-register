@@ -2,14 +2,18 @@ import { useState, useEffect } from "react";
 import api from "../api";
 import PostCard from "../components/PostCard";
 import Layout from "../components/Layout";
+import { useToast } from "../context/ToastContext";
 
 function Home() {
     const [posts, setPosts] = useState([]);
     const [content, setContent] = useState("");
     const [title, setTitle] = useState("");
     const [image, setImage] = useState(null);
+    const [preview, setPreview] = useState(null); // Preview state
     const [isCreating, setIsCreating] = useState(false);
     const [loading, setLoading] = useState(false);
+    
+    const { addToast } = useToast();
 
     useEffect(() => {
         getPosts();
@@ -21,7 +25,7 @@ function Home() {
             .then((data) => {
                 setPosts(data);
             })
-            .catch((err) => alert("Error fetching posts"));
+            .catch((err) => addToast("Failed to fetch research feed.", "error"));
     };
 
     const deletePost = (id) => {
@@ -29,11 +33,19 @@ function Home() {
             api.delete(`/api/blog/posts/${id}/`)
                 .then((res) => {
                     if (res.status === 204) {
+                        addToast("Citation deleted successfully.", "info");
                         setPosts(posts.filter(post => post.id !== id));
                     }
-                    else alert("Failed to delete post.");
                 })
-                .catch((error) => alert(error));
+                .catch((error) => addToast("Failed to delete post.", "error"));
+        }
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImage(file);
+            setPreview(URL.createObjectURL(file));
         }
     };
 
@@ -55,15 +67,16 @@ function Home() {
         })
             .then((res) => {
                 if (res.status === 201) {
-                    alert("Research Published Successfully!");
+                    addToast("Research published successfully!", "success");
                     setTitle("");
                     setContent("");
                     setImage(null);
+                    setPreview(null);
                     setIsCreating(false);
                     getPosts();
-                } else alert("Failed to make post.");
+                }
             })
-            .catch((err) => alert(err))
+            .catch((err) => addToast("Failed to publish research.", "error"))
             .finally(() => setLoading(false));
     };
 
@@ -102,16 +115,27 @@ function Home() {
                                 placeholder="Enter paper title..."
                             />
                         </div>
-                         <div className="mb-6">
+                        
+                        <div className="mb-6">
                             <label htmlFor="image" className="block text-slate-700 text-xs font-bold mb-2 font-sans uppercase tracking-widest">Figure / Illustration (Optional)</label>
-                            <input
-                                type="file"
-                                id="image"
-                                accept="image/*"
-                                onChange={(e) => setImage(e.target.files[0])}
-                                className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 transition"
-                            />
+                            <div className="flex items-start gap-4">
+                                <input
+                                    type="file"
+                                    id="image"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 transition mb-2"
+                                />
+                            </div>
+                            {/* Image Preview Area */}
+                            {preview && (
+                                <div className="mt-4 border border-gray-200 p-2 inline-block">
+                                    <p className="text-xs uppercase font-bold text-slate-400 mb-2">Preview</p>
+                                    <img src={preview} alt="Preview" className="h-40 object-contain" />
+                                </div>
+                            )}
                         </div>
+
                         <div className="mb-8">
                             <label htmlFor="content" className="block text-slate-700 text-xs font-bold mb-2 font-sans uppercase tracking-widest">Abstract / Content</label>
                             <textarea

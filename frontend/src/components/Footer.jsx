@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Footer() {
     return (
         <footer className="bg-white border-t border-gray-200 mt-auto">
@@ -12,17 +14,17 @@ function Footer() {
                     <div>
                         <h4 className="font-sans font-bold text-xs uppercase tracking-widest text-slate-900 mb-4">Resources</h4>
                         <ul className="space-y-2 text-sm text-slate-500 font-sans">
-                            <li><a href="#" className="hover:text-blue-800 transition">Documentation</a></li>
-                            <li><a href="#" className="hover:text-blue-800 transition">API Reference</a></li>
-                            <li><a href="#" className="hover:text-blue-800 transition">Submission Guidelines</a></li>
+                            <li><Link to="/documentation" className="hover:text-blue-800 transition">Documentation</Link></li>
+                            <li><Link to="/our-story" className="hover:text-blue-800 transition">Our Story</Link></li>
+                            <li><Link to="/submission-guidelines" className="hover:text-blue-800 transition">Submission Guidelines</Link></li>
                         </ul>
                     </div>
                     <div>
                         <h4 className="font-sans font-bold text-xs uppercase tracking-widest text-slate-900 mb-4">Legal</h4>
                         <ul className="space-y-2 text-sm text-slate-500 font-sans">
-                            <li><a href="#" className="hover:text-blue-800 transition">Privacy Policy</a></li>
-                            <li><a href="#" className="hover:text-blue-800 transition">Terms of Service</a></li>
-                            <li><a href="#" className="hover:text-blue-800 transition">Cookie Policy</a></li>
+                            <li><Link to="/privacy" className="hover:text-blue-800 transition">Privacy Policy</Link></li>
+                            <li><Link to="/terms" className="hover:text-blue-800 transition">Terms of Service</Link></li>
+                            <li><Link to="/cookies" className="hover:text-blue-800 transition">Cookie Policy</Link></li>
                         </ul>
                     </div>
                 </div>

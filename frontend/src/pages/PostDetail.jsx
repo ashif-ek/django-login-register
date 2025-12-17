@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../api";
 import Layout from "../components/Layout";
+import { useToast } from "../context/ToastContext";
 
 function PostDetail() {
     const { id } = useParams();
     const [post, setPost] = useState(null);
     const navigate = useNavigate();
+    const { addToast } = useToast();
 
     useEffect(() => {
         getPost();
@@ -17,7 +19,7 @@ function PostDetail() {
             const res = await api.get(`/api/blog/posts/${id}/`);
             setPost(res.data);
         } catch (err) {
-            alert("Post not found!");
+            addToast("Citation not found or access denied.", "error");
             navigate("/");
         }
     };

@@ -4,6 +4,9 @@ import LoadingFallback from "./components/LoadingFallback";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";  
 
+import { ToastProvider } from "./context/ToastContext";
+import { OurStory, Documentation, SubmissionGuidelines, PrivacyPolicy, TermsOfService, CookiePolicy } from "./pages/StaticPages";
+
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const Home = lazy(() => import("./pages/Home"));
@@ -32,10 +35,11 @@ const PageWrapper = ({ children }) => (
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
+      <ToastProvider>
+        <Routes>
+          <Route
+            path="/"
+            element={
             <PageWrapper>
               <ProtectedRoute>
                 <Home />
@@ -66,8 +70,18 @@ function App() {
         <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
         <Route path="/logout" element={<PageWrapper><Logout /></PageWrapper>} />
         <Route path="/register" element={<PageWrapper><RegisterAndLogout /></PageWrapper>} />
+        
+        {/* Static Pages */}
+        <Route path="/our-story" element={<PageWrapper><OurStory /></PageWrapper>} />
+        <Route path="/documentation" element={<PageWrapper><Documentation /></PageWrapper>} />
+        <Route path="/submission-guidelines" element={<PageWrapper><SubmissionGuidelines /></PageWrapper>} />
+        <Route path="/privacy" element={<PageWrapper><PrivacyPolicy /></PageWrapper>} />
+        <Route path="/terms" element={<PageWrapper><TermsOfService /></PageWrapper>} />
+        <Route path="/cookies" element={<PageWrapper><CookiePolicy /></PageWrapper>} />
+
         <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
+      </ToastProvider>
     </BrowserRouter>
   )
 }
